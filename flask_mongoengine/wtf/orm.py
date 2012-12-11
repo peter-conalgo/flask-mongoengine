@@ -201,8 +201,7 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
     field_names = map(itemgetter(0), sorted(names, key=itemgetter(1)))
 
     if only:
-        field_names = set(field_names)
-        field_names = (x for x in only if x in field_names)
+        field_names = filter(lambda x: x in field_names, only)
     elif exclude:
         field_names = (x for x in field_names if x not in exclude)
 
