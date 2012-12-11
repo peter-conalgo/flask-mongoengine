@@ -4,6 +4,7 @@ Tools for generating forms based on mongoengine Document schemas.
 from operator import itemgetter
 from wtforms import fields as f, validators
 from mongoengine import ReferenceField
+from collections import OrderedDict
 
 from flask.ext.mongoengine.wtf.fields import ModelSelectField, ModelSelectMultipleField, DictField, NoneStringField
 from flask.ext.mongoengine.wtf.models import ModelForm
@@ -185,7 +186,7 @@ class ModelConverter():
 
 def model_fields(model, only=None, exclude=None, field_args=None, converter=None):
     """
-    Generate a dictionary of fields for a given Django model.
+    Generate a dictionary of fields for a given database model.
 
     See `model_form` docstring for description of parameters.
     """
@@ -200,11 +201,11 @@ def model_fields(model, only=None, exclude=None, field_args=None, converter=None
     field_names = map(itemgetter(0), sorted(names, key=itemgetter(1)))
 
     if only:
-        field_names = (x for x in field_names if x in only)
+        field_names = (x for x in only if x in field_names)
     elif exclude:
         field_names = (x for x in field_names if x not in exclude)
 
-    field_dict = {}
+    field_dict = OrderedDict()
     for name in field_names:
         model_field = model._fields[name]
         field = converter.convert(model, model_field, field_args.get(name))
